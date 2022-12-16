@@ -1,0 +1,168 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<conio.h>
+void createAccount();
+void list_all_customer_Details();
+void know_your_details();
+void withdraw();
+void deposit();
+ 
+ 
+int main(int argc, char const *argv[])
+{
+ 
+    int choice;
+    printf("Welcome to Bank Management System\n");
+        /* code */
+ 
+    while(getch() != 'n')
+	{
+    printf("Choose from the menu given below :\n");
+    printf("1. Create you bank account\n");
+    printf("2. List all the customer details\n");
+    printf("3. Know your amount details\n");
+    printf("4. deposit money\n");
+    printf("5. withdraw money\n");
+    int i;
+    scanf("%d",&choice);
+    switch (choice)
+    {
+    case 1:
+        for (i = 0; i < 3; i++)
+        {
+        createAccount();    
+        }
+        break;
+    case 2:
+        list_all_customer_Details();
+        break;   
+    case 3:
+        know_your_details();
+        break;     
+	case 4:
+        deposit();
+        break; 
+	case 5:
+        withdraw();
+        break; 	
+    }
+ 
+    }
+	return 0;
+}
+void deposit()
+{
+	char name[50];
+	int dpa = 0;
+	printf("\nPlease enter your name ");
+	scanf("%s",name);
+	printf("\nEnter the amount you need to deposit\n");
+	scanf("%d",dpa);
+	FILE *fp = fopen(name,"r+");//current balance
+    char filename[30];
+		strcpy(filename,name);
+	strcat(filename,".txt");
+	printf("%s",filename);
+	int amount = getw(fp);
+	amount = amount + dpa;
+	putw(amount,fp);
+	fclose(fp);
+	printf("Amount deposited , now the balance is %d",amount);
+	strcat(name,"transaction.txt");
+ 
+	FILE *ft = fopen(name,"a");//current balance
+	if(ft == NULL)
+	{
+		printf("Error opening file");
+			exit(1);
+	}
+	fprintf(ft,"you deposited %d , now the balance is %d",dpa,amount);
+	fclose(ft);
+}
+void withdraw()
+{
+}
+void createAccount()
+{
+    FILE *fp = fopen("customer_details.csv","a+");
+    char name[150];
+    char email_id[50];
+    int account_no ; 
+    char account_no_bank [10];
+    char amount_bank [10];
+    int intial_deposit ; //minimum 50 
+    int amount;
+    int choice ; 
+    printf("\n*************Enter your Details here*************");
+    printf("\nEnter your name : ");
+    scanf("%s",name);
+    printf("\nEnter your email_id : ");
+    scanf("%s",email_id);
+    account_no = rand();
+    printf("\nEnter your intial deposit: ");
+    scanf("%d",&intial_deposit);
+    if(intial_deposit < 500)
+    {
+        printf("\nDeposit should be more than 500");
+        printf("\nEnter your intial deposit: ");
+        scanf("%d",&intial_deposit);
+    }
+    amount = intial_deposit;
+    char filename[100];
+    char fileTransaction[100];
+    strcpy(filename,name);
+    strcpy(fileTransaction,name);
+    printf("\nCongratulations on creating an account with our Bank. You account no is %d",account_no);
+    FILE * fp1 = fopen(strcat(filename,".txt"),"w");
+    FILE *fp2 = fopen(strcat(fileTransaction,"_transaction.txt"),"w");
+    putw(amount,fp1);
+    strcat(name,",");
+    strcat(name,email_id);
+    strcat(name,",");
+    strcat(name,itoa(account_no,account_no_bank,10));
+    strcat(name,",");
+    strcat(name,itoa(amount,amount_bank,10));
+    fputs(name,fp);
+    fclose(fp1);
+    fclose(fp2);   
+    fclose(fp);
+}
+ 
+void list_all_customer_Details()
+{
+ 
+    FILE *fp = fopen("customer_details.csv","r");
+    char buf[150];
+    char *token ; 
+    if(fp != NULL)
+    {
+        printf("********Details about all the customers **********\n");
+ 
+        while(fgets(buf,150,fp) != NULL)
+        {
+            token = strtok(buf,",");
+            printf(" Name  = %s",token);
+            token = strtok(NULL,",");
+            printf(" Email id  = %s",token);
+            token = strtok(NULL,",");
+            printf(" Account no = %s",token);
+            token = strtok(NULL,",");
+            printf(" Amount = %s",token);
+ 
+        }
+    }
+    else{
+        printf("FIle does not exists");
+    }
+ 
+}
+ 
+void know_your_details()
+{
+    char name[50];
+    printf("Enter your name");
+    scanf("%s",name);
+    FILE *fp = fopen(strcat(name,".txt"),"r");
+    printf("Your current balance is %d",getw(fp));
+}
